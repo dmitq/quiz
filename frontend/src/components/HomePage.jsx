@@ -1,12 +1,9 @@
 import { Box } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import BasicInput from "./Inputs/BasicInput";
 import {
   Skeleton,
-  Stack,
-  SkeletonCircle,
-  SkeletonText,
+  Stack
 } from "@chakra-ui/react";
 import QuizCard from "./Cards/QuizCard";
 

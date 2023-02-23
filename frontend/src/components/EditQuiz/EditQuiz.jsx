@@ -1,5 +1,5 @@
 import { Text } from "@chakra-ui/react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useContext, useState, useEffect } from "react";
 import { Input, useToast } from "@chakra-ui/react";
 import { UserContext } from "../../UserContext";

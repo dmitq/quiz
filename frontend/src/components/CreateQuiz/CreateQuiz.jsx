@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import {Navigate} from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { UserContext } from '../../UserContext';
 import { useContext } from 'react';
 import { useForm } from "react-hook-form";
@@ -70,7 +70,9 @@ function CreateQuiz() {
     return <Navigate to="/login"></Navigate>
   }
   if (quizId) {return <Navigate to="/" />}
-
+  if (error) {
+    return error
+  }
   return (
     <>
     <form onSubmit={handleSubmit(onSubmit)}>

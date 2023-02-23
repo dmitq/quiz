@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Navigate } from "react-router-dom";
 import { Link } from "react-router-dom";
-import { useToast, Box, Text, Input } from "@chakra-ui/react";
+import { useToast, Text, Button } from "@chakra-ui/react";
 import BasicInput from "./Inputs/BasicInput";
 import PasswordInput from "./Inputs/PasswordInput";
 import CenterBox from "./CenterBox";
