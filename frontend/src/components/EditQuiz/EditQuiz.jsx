@@ -15,7 +15,7 @@ function EditQuiz() {
   const [error, setError] = useState();
   const [loading, setLoading] = useState(true);
 
-  const { register, handleSubmit, unregister} = useForm()
+  const { register, handleSubmit } = useForm()
   const quiz_id = useParams().quiz_id;
   const [title, setTitle] = useState("");
   const [bio, setBio] = useState("");
@@ -33,7 +33,7 @@ function EditQuiz() {
         },
       };
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/quizes/edit/quiz_id`,
+        `${import.meta.env.VITE_API_URL}/api/quizes/edit/${quiz_id}`,
         requestOptions
       );
       const data = await response.json();
@@ -74,7 +74,7 @@ function EditQuiz() {
     };
     setLoading(true);
     const response = await fetch(
-      `${import.meta.env.VITE_API_URL}/api/quizes/quiz_id`,
+      `${import.meta.env.VITE_API_URL}/api/quizes/${quiz_id}`,
       requestOptions
     );
     const data = await response.json();

@@ -207,16 +207,14 @@ function QuizPage() {
   return (
     <CenterBox>
       <Box textAlign="center">
-        <Text fontSize="4xl">{quiz.title}</Text>
-        <Text>{quiz.description}</Text>
-        <Text>{convertUTCDateToLocalDate(new Date(quiz.date_created))}</Text>
+        <Text fontSize="4xl" display="inline">{quiz.title}</Text>
         {localStorage.getItem("Id") == quiz.author_id && (
           <Link to="./edit">
-            <Button variant="ghost">
-              <EditIcon />
-            </Button>
+              <EditIcon marginLeft={2}/>
           </Link>
         )}
+        <Text>{quiz.description}</Text>
+        <Text>{convertUTCDateToLocalDate(new Date(quiz.date_created))}</Text>
       </Box>
       <Stack direction="row" justifyContent="space-between" width="10rem">
         <Button variant="outline" fontSize="3xl" onClick={() => handlePrev()}>
