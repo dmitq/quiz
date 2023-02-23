@@ -14,9 +14,8 @@ from load_envs import PUBLIC_URL
 services.create_database()
 
 app = FastAPI()
-
 app.add_middleware(CORSMiddleware,
-                   allow_origins=[PUBLIC_URL],
+                   allow_origins=[ PUBLIC_URL, ],
                    allow_credentials=True,
                    allow_methods=["*"],
                    allow_headers=["*"])

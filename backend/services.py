@@ -9,7 +9,6 @@ import jwt
 from load_envs import JWT_SECRET_KEY
 
 
-print(JWT_SECRET_KEY)
 oath2schema = security.OAuth2PasswordBearer(tokenUrl="/api/token")
 
 
