@@ -1,7 +1,7 @@
 import datetime as dt
 import sqlalchemy as sql
 import sqlalchemy.orm as orm
-import passlib.hash as hash
+from passlib.hash import bcrypt
 import database
 
 
@@ -15,7 +15,7 @@ class User(database.Base):
     quizes = orm.relationship("Quiz", back_populates="author")
 
     def verify_password(self, password: str):
-        return hash.bcrypt.verify(password, self.hashed_password)
+        return bcrypt.verify(password, self.hashed_password)
 
 
 class Quiz(database.Base):

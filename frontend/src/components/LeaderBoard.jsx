@@ -10,20 +10,10 @@ import {
   Td,
   TableContainer,
 } from "@chakra-ui/react";
+import convertUTCDateToLocalDate from "../convertUTCDateToLocalDate";
 function LeaderBoard({ mobile }) {
   const quiz_id = useParams().quiz_id;
   const [leaderboard, setLeaderboard] = useState([]);
-  function convertUTCDateToLocalDate(date) {
-    const newDate = new Date(
-      date.getTime() + date.getTimezoneOffset() * 60 * 1000
-    );
-    const offset = date.getTimezoneOffset() / 60;
-    const hours = date.getHours();
-    newDate.setHours(hours - offset);
-    return String(
-      `${newDate.getHours()}:${newDate.getMinutes()}_${newDate.getDate()}.${newDate.getMonth()}.${newDate.getFullYear()}`
-    );
-  }
   const fetchLeaderboard = async () => {
     const requestOptions = {
       method: "GET",
@@ -38,7 +28,6 @@ function LeaderBoard({ mobile }) {
     );
     const data = await response.json();
     setLeaderboard(data);
-    //console.log(convertUTCDateToLocalDate(new Date(data[0].date)))
   };
   useEffect(() => {
     fetchLeaderboard();

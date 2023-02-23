@@ -1,12 +1,12 @@
 import fastapi
 import fastapi.security as security
 import sqlalchemy.orm as orm
-import passlib.hash as hash
+from passlib.hash import bcrypt
 import database
 import models
 import schemas
 import jwt
-from load_envs import JWT_SECRET_KEY
+from load_envs import JWT_SECRET_KEY, BCRYPT_ROUNDS
 
 
 oath2schema = security.OAuth2PasswordBearer(tokenUrl="/api/token")
@@ -30,8 +30,7 @@ async def get_user_by_login(login: str, db: orm.Session):
 
 async def create_user(user: schemas.UserCreate, db: orm.Session):
     user_obj = models.User(login=user.login,
-                           hashed_password=hash.bcrypt.hash(
-                               user.hashed_password),
+                           hashed_password=bcrypt.using(rounds=BCRYPT_ROUNDS).hash(user.hashed_password),
                            name=user.name)
     db.add(user_obj)
     db.commit()

@@ -8,6 +8,7 @@ import AnswerCard from "./Cards/AnswerCard";
 import SubmitAnswers from "./SubmitQuiz";
 import LeaderBoard from "./LeaderBoard";
 import { useForm } from "react-hook-form";
+import convertUTCDateToLocalDate from "../convertUTCDateToLocalDate";
 function QuizPage() {
   const quiz_id = useParams().quiz_id;
   const [index, setIndex] = useState(0);
@@ -118,8 +119,8 @@ function QuizPage() {
             Правильных ответов: {results[1]} из{" "}
             {Object.entries(results[0]).length}
           </Text>
-          <Link to="./leaderboard">
-            <Button marginTop="10px">Таблица лидеров</Button>
+          <Link to="./leaderboard" >
+            <Button marginTop="10px" display={["inline-block", "inline-block", "inline-block", "none", "none"]}>Таблица лидеров</Button>
           </Link>
         </Box>
         <Box
@@ -142,11 +143,13 @@ function QuizPage() {
                 <Stack
                   key={index}
                   width="100%"
-                  margin="20px 0 20px 0"
+                  marginBottom={["30px", "70px"]}
                   alignItems="center"
+                  gap={3}
                 >
                   <Text fontSize="3xl">{q[0]}</Text>
-
+                  <Box width="100%">
+                  <Text fontSize="md">Выбранный ответ: </Text>
                   {user_answers.map((a, index) => {
                     let color = a[1] ? "red.500" : "whiteAlpha.100";
                     if (a[1] && real_answers[index][1]) {
@@ -156,38 +159,42 @@ function QuizPage() {
                       <Box
                         key={index}
                         width="100%"
-                        minH="10vh"
+                        minH={["7vh", "10vh"]}
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
                         border="2px black"
                         borderRadius="7px"
+                        margin="5px 0"
                         backgroundColor={color}
-                        margin="0"
                       >
                         <Text fontSize="xl">{a[0]}</Text>
                       </Box>
                     );
                   })}
+                  </Box>
+                  <Box width="100%">
 
-                  <Text fontSize="2xl">Правильный ответ: </Text>
+                  <Text fontSize="md">Правильный ответ: </Text>
                   {real_answers.map((a, index) => {
                     return (
                       <Box
                         key={index}
                         width="100%"
-                        minH="10vh"
+                        minH={["7vh", "10vh"]}
                         display="flex"
                         alignItems="center"
                         justifyContent="center"
                         border="2px black"
                         borderRadius="7px"
+                        margin="5px 0"
                         backgroundColor={a[1] ? "green.400" : "whiteAlpha.100"}
                       >
                         <Text fontSize="xl">{a[0]}</Text>
                       </Box>
                     );
                   })}
+                  </Box>
                 </Stack>
               );
             })}
@@ -202,7 +209,7 @@ function QuizPage() {
       <Box textAlign="center">
         <Text fontSize="4xl">{quiz.title}</Text>
         <Text>{quiz.description}</Text>
-        <Text>{quiz.date_created}</Text>
+        <Text>{convertUTCDateToLocalDate(new Date(quiz.date_created))}</Text>
         {localStorage.getItem("Id") == quiz.author_id && (
           <Link to="./edit">
             <Button variant="ghost">
