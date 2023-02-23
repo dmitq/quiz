@@ -41,7 +41,7 @@ function NavBar() {
               <Button variant="solid">Войти</Button>
             </Link>
           )}
-          {token && (
+          {token != null && (
             <>
               <Link to="/me">
                 <Button size="md" variant="link">

@@ -6,12 +6,12 @@ import database
 import models
 import schemas
 import jwt
-from dotenv import load_dotenv
-import os
+from load_envs import JWT_SECRET_KEY
 
-load_dotenv("../.env.production")
-JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
+
+print(JWT_SECRET_KEY)
 oath2schema = security.OAuth2PasswordBearer(tokenUrl="/api/token")
+
 
 def create_database():
     return database.Base.metadata.create_all(bind=database.engine)
@@ -30,8 +30,10 @@ async def get_user_by_login(login: str, db: orm.Session):
 
 
 async def create_user(user: schemas.UserCreate, db: orm.Session):
-    user_obj = models.User(login=user.login, hashed_password=hash.bcrypt.hash(
-        user.hashed_password), name=user.name)
+    user_obj = models.User(login=user.login,
+                           hashed_password=hash.bcrypt.hash(
+                               user.hashed_password),
+                           name=user.name)
     db.add(user_obj)
     db.commit()
     db.refresh(user_obj)
@@ -53,19 +55,22 @@ async def create_token(user: models.User):
     return dict(access_token=token, token_type="bearer")
 
 
-async def get_current_user(db: orm.Session = fastapi.Depends(get_db), token: str = fastapi.Depends(oath2schema)):
+async def get_current_user(db: orm.Session = fastapi.Depends(get_db),
+                           token: str = fastapi.Depends(oath2schema)):
     try:
         payload = jwt.decode(token, JWT_SECRET_KEY, algorithms=["HS256"])
         user = db.query(models.User).get(payload["id"])
     except:
-        raise fastapi.HTTPException(
-            status_code=401, detail="Invalid Email or Password")
+        raise fastapi.HTTPException(status_code=401,
+                                    detail="Invalid Email or Password")
     return schemas.User.from_orm(user)
 
 
-async def create_quiz(user: schemas.User, db: orm.Session, quiz: schemas.QuizCreate):
-    quiz_info = models.Quiz(
-        title=quiz.title, description=quiz.description, author_id=user.id)
+async def create_quiz(user: schemas.User, db: orm.Session,
+                      quiz: schemas.QuizCreate):
+    quiz_info = models.Quiz(title=quiz.title,
+                            description=quiz.description,
+                            author_id=user.id)
     db.add(quiz_info)
     db.commit()
     db.refresh(quiz_info)
@@ -77,8 +82,10 @@ async def create_quiz(user: schemas.User, db: orm.Session, quiz: schemas.QuizCre
         db.commit()
         db.refresh(question_info)
         for answer in question.answers:
-            answer_info = models.Answer(question_id=schemas.Question.from_orm(
-                question_info).id, title=answer.title, is_correct=answer.is_correct)
+            answer_info = models.Answer(
+                question_id=schemas.Question.from_orm(question_info).id,
+                title=answer.title,
+                is_correct=answer.is_correct)
             db.add(answer_info)
             db.commit()
             db.refresh(answer_info)
@@ -88,8 +95,8 @@ async def create_quiz(user: schemas.User, db: orm.Session, quiz: schemas.QuizCre
 async def select_quiz(quiz_id: int, db: orm.Session):
     quiz = db.query(models.Quiz).filter_by(id=quiz_id).first()
     if quiz is None:
-        raise fastapi.HTTPException(
-            status_code=404, detail="quiz does not exist")
+        raise fastapi.HTTPException(status_code=404,
+                                    detail="quiz does not exist")
     return quiz
 
 
@@ -102,10 +109,13 @@ async def get_quiz(quiz_id: int, db: orm.Session):
     quiz = await select_quiz(quiz_id, db)
     quiz = dict(schemas.Quiz.from_orm(quiz))
     res = []
-    for i in list(map(schemas.Question.from_orm, db.query(models.Question).filter_by(quiz_id=quiz_id))):
+    for i in list(
+            map(schemas.Question.from_orm,
+                db.query(models.Question).filter_by(quiz_id=quiz_id))):
         a = dict(i)
-        a["answers"] = list(map(schemas.AnswerPublic.from_orm, db.query(
-            models.Answer).filter_by(question_id=a["id"])))
+        a["answers"] = list(
+            map(schemas.AnswerPublic.from_orm,
+                db.query(models.Answer).filter_by(question_id=a["id"])))
         res.append(a)
     quiz["questions"] = res
     quiz["date_created"] = quiz["date_created"]
@@ -122,13 +132,13 @@ async def get_quiz_bio(quiz_id: int, db: orm.Session):
 
 
 async def delete_quiz(quiz_id: int, user: schemas.User, db: orm.Session):
-    quiz = db.query(models.Quiz).filter_by(
-        id=quiz_id).filter_by(author_id=user.id).first()
+    quiz = db.query(models.Quiz).filter_by(id=quiz_id).filter_by(
+        author_id=user.id).first()
     if quiz:
         db.delete(quiz)
         db.commit()
-    questions = db.query(models.Question).filter(
-        models.Question.quiz_id == quiz_id)
+    questions = db.query(
+        models.Question).filter(models.Question.quiz_id == quiz_id)
     for q in questions:
         answers = db.query(models.Answer).filter_by(question_id=q.id)
         for a in answers:
@@ -138,14 +148,15 @@ async def delete_quiz(quiz_id: int, user: schemas.User, db: orm.Session):
         db.commit()
 
 
-async def update_quiz(quiz_id: int, quiz: schemas.QuizCreate, user: schemas.User, db: orm.Session):
+async def update_quiz(quiz_id: int, quiz: schemas.QuizCreate,
+                      user: schemas.User, db: orm.Session):
     quiz_db = await select_quiz(quiz_id, db)
     quiz_db.title = quiz.title
     quiz_db.description = quiz.description
     db.commit()
     db.refresh(quiz_db)
-    questions = db.query(models.Question).filter(
-        models.Question.quiz_id == quiz_id)
+    questions = db.query(
+        models.Question).filter(models.Question.quiz_id == quiz_id)
     for q in questions:
         answers = db.query(models.Answer).filter_by(question_id=q.id)
         for a in answers:
@@ -159,8 +170,10 @@ async def update_quiz(quiz_id: int, quiz: schemas.QuizCreate, user: schemas.User
         db.commit()
         db.refresh(question_info)
         for a in q.answers:
-            answer_info = models.Answer(question_id=schemas.Question.from_orm(
-                question_info).id, title=a.title, is_correct=a.is_correct)
+            answer_info = models.Answer(
+                question_id=schemas.Question.from_orm(question_info).id,
+                title=a.title,
+                is_correct=a.is_correct)
             db.add(answer_info)
             db.commit()
             db.refresh(answer_info)
@@ -171,31 +184,41 @@ async def check_answers(data: schemas.AnswersCheck, db: orm.Session):
     user_name = data.name
     answers = dict()
     items = tuple(user_answers.items())
-    quiz_id = db.query(models.Question).filter_by(id=items[0][0]).first().quiz_id
+    quiz_id = db.query(
+        models.Question).filter_by(id=items[0][0]).first().quiz_id
     for question_index, us_answers in items:
-        correct_answers = {x.title: x.is_correct for x in db.query(models.Answer).filter_by(question_id=question_index)}
-        answers[db.query(models.Question).filter_by(id=question_index).first().title] = dict(
-            real_answers=correct_answers,
-            user_answers=us_answers
-        )
+        correct_answers = {
+            x.title: x.is_correct
+            for x in db.query(models.Answer).filter_by(
+                question_id=question_index)
+        }
+        answers[db.query(models.Question).filter_by(
+            id=question_index).first().title] = dict(
+                real_answers=correct_answers, user_answers=us_answers)
     score = 0
     for key, value in answers.items():
         flag = True
-        for i in zip(value["user_answers"].values(), value["real_answers"].values()):
+        for i in zip(value["user_answers"].values(),
+                     value["real_answers"].values()):
             if i[0] != i[1]:
                 flag = False
                 break
         if flag:
             score += 1
 
-    leaderboard = models.Leaderboard(
-        quiz_id=quiz_id, user_name=user_name, score=score)
+    leaderboard = models.Leaderboard(quiz_id=quiz_id,
+                                     user_name=user_name,
+                                     score=score)
     db.add(leaderboard)
     db.commit()
     db.refresh(leaderboard)
 
     return answers, score
 
+
 async def get_leaderboard(quiz_id: int, db: orm.Session):
-    leaderboard = db.query(models.Leaderboard).filter(models.Leaderboard.quiz_id == quiz_id)
-    return sorted(list(map(schemas.Leaderboard.from_orm, leaderboard)), key=lambda x: x.score, reverse=True)
+    leaderboard = db.query(
+        models.Leaderboard).filter(models.Leaderboard.quiz_id == quiz_id)
+    return sorted(list(map(schemas.Leaderboard.from_orm, leaderboard)),
+                  key=lambda x: x.score,
+                  reverse=True)

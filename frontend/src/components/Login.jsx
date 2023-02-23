@@ -12,6 +12,7 @@ function Register() {
   const [login, setLogin] = useState("");
   const [password, setPassword] = useState("");
   const [valid, setValid] = useState(false);
+  const [loading, setLoading] = useState(false);
   const toast = useToast();
   const submitLogin = async () => {
     const requestOptions = {
@@ -21,13 +22,13 @@ function Register() {
         `grant_type=&username=${login}&password=${password}&scope=&client_id=&client_secret=`
       ),
     };
-
+    setLoading(true)
     const response = await fetch(
       `${import.meta.env.VITE_API_URL}/api/token`,
       requestOptions
     );
     const data = await response.json();
-
+    setLoading(false)
     if (!response.ok) {
       toast({
         title: "Неверный логин или пароль",
@@ -69,7 +70,14 @@ function Register() {
             setPassword(e.target.value);
           }}
         />
-        <Input type="submit" value="Войти" variant="filled" />
+        <Button
+          isLoading={loading}
+          width="100%"
+          type="submit"
+          colorScheme="whatsapp"
+        >
+          Войти
+        </Button>
         <Link to="/register">Нет учетной записи?</Link>
       </CenterBox>
     </form>
