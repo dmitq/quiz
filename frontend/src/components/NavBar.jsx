@@ -5,7 +5,6 @@ import { Box, Button } from "@chakra-ui/react";
 
 function NavBar() {
   const [token, setToken, login] = useContext(UserContext);
-  console.log(token)
   const handleLogout = () => {
     setToken(null);
   };
