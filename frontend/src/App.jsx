@@ -8,8 +8,13 @@ import QuizPage from "./components/QuizPage";
 import Me from "./components/Me";
 import EditQuiz from "./components/EditQuiz/EditQuiz";
 import LeaderBoard from "./components/LeaderBoard";
-
+import { useState } from "react";
+import PreLoader from "./components/PreLoader";
 function App() {
+  const [loading, setLoading] = useState(true)
+  if (loading) {
+    return <PreLoader setLoading={setLoading}></PreLoader>
+  }
   return (
     <>
       <NavBar></NavBar>
