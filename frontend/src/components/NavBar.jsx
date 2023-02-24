@@ -1,10 +1,11 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { UserContext } from "../UserContext";
-import { Box, Button, Stack } from "@chakra-ui/react";
+import { Box, Button } from "@chakra-ui/react";
 
 function NavBar() {
   const [token, setToken, login] = useContext(UserContext);
+  console.log(token)
   const handleLogout = () => {
     setToken(null);
   };
