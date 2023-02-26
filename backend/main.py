@@ -9,8 +9,7 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 import sys
-from load_envs import PUBLIC_URL
-
+from load_envs import PUBLIC_URL, API_HOST, API_PORT
 services.create_database()
 
 app = FastAPI()
@@ -120,4 +119,4 @@ async def root():
 
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=10000)
+    uvicorn.run(app, host=API_HOST, port=int(API_PORT))
